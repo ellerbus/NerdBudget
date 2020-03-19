@@ -1,0 +1,105 @@
+{% extends 'nerdbudget/layout.html' %}
+{% load humanize %}
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr class="{% if variance.weekly_amount < 0 %}table-danger{% else %}table-success{% endif %}">
+        <th>VARIANCE</th>
+        <th class="icons"></th>
+        <th style="width: 50px"></th>
+        <th class="text-right" style="width: 85px">
+          {{ variance.weekly_amount|stringformat:'0.0f'|intcomma }}
+        </th>
+        <th class="text-right" style="width: 85px">
+          {{ variance.monthly_amount|stringformat:'0.0f'|intcomma }}
+        </th>
+        <th class="text-right" style="width: 85px">
+          {{ variance.yearly_amount|stringformat:'0.0f'|intcomma }}
+        </th>
+        <th class="icons"></th>
+      </tr>
+    </thead>
+  </table>
+
+  {% for category in categories %}
+  <table class="table table-sm table-striped table-sortable">
+    <thead>
+      <tr>
+        <th colspan="2">
+          {{ category.name }}
+        </th>
+        <th class="icons"></th>
+        <th style="width: 50px"></th>
+        <th class="icons"></th>
+        <th class="text-right" style="width: 85px">W</th>
+        <th class="text-right" style="width: 85px">M</th>
+        <th class="text-right" style="width: 85px">Y</th>
+        <th class="icons">
+          <a href="{% url 'budget-create' %}?category_id={{ category.id }}" nb-create-icon></a>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for budget in category.budget_set.all %}
+      <tr>
+        <td class="sorter">
+          <i nb-move-icon></i>
+          <input type="hidden" name="id" value="{{ budget.id }}" />
+        </td>
+        <td>
+          {{ budget.name }}
+        </td>
+        <td class="text-right">
+          {{ budget.amount|stringformat:'0.0f'|intcomma }}
+        </td>
+        <td class="text-left">
+          x {{ budget.frequency }}
+        </td>
+        <td>
+          {% if 'W' in budget.frequency %}
+          every {{ budget.start_date|date:'D' }}
+          {% elif 'M' in budget.frequency %}
+          on the {{ budget.start_date|date:'jS' }}
+          {% elif 'MT' in budget.frequency %}
+          15th &amp; last day
+          {% elif 'Q' in budget.frequency %}
+          quarterly
+          {% elif 'Y' in budget.frequency %}
+          annually
+          {% endif %}
+        </td>
+        <td class="text-right">
+          {{ budget.weekly_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+        <td class="text-right">
+          {{ budget.monthly_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+        <td class="text-right">
+          {{ budget.yearly_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+        <td class="icons">
+          <a href="{% url 'budget-update' budget.id %}" nb-update-icon></a>
+          <a href="{% url 'budget-delete' budget.id %}" nb-delete-icon></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endfor %}
+  <table class="table table-sm table-striped">
+    <tfoot>
+      <tr>
+        <td class="text-right">
+          <button type="submit" class="btn btn-warning mt-3">
+            Update Sequences
+          </button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</form>
+{% include 'budget/_budget.html' %}
+{% endblock content %}

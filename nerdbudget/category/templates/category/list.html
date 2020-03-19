@@ -1,0 +1,52 @@
+{% extends 'nerdbudget/layout.html' %}
+{% block content %}
+
+<form method="POST">
+  {% csrf_token %}
+  <table class="table table-sm table-striped table-sortable">
+    <thead>
+      <tr>
+        <th class="sorter"></th>
+        <th>Name</th>
+        <th class="text-center"
+            style="width: 100px">Income</th>
+        <th class="icons">
+          <a href="{% url 'category-create' %}" nb-create-icon></a>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+      <tr class="{{ category.get_ui_state }}">
+        <td class="sorter">
+          <i nb-move-icon></i>
+          <input type="hidden" name="id" value="{{ category.id }}" />
+        </td>
+        <td>
+          {{ category.name }}
+        </td>
+        <td class="text-center">
+          {% if category.multiplier == 1 %}
+          Yes
+          {% endif %}
+        </td>
+        <td class="icons">
+          <a href="{% url 'category-update' category.id %}" nb-update-icon></a>
+          <a href="{% url 'category-delete' category.id %}" nb-delete-icon></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="text-right" colspan="4">
+          <button type="submit" class="btn btn-warning mt-3">
+            Update Sequences
+          </button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</form>
+{% include 'category/_category.html' %}
+{% endblock content %}

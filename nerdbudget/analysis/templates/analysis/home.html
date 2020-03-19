@@ -1,0 +1,97 @@
+{% extends 'nerdbudget/layout.html' %}
+{% load humanize %}
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <table class="table table-sm table-striped">
+    {% if dates.current %}
+    <thead>
+      <tr
+          class="{% if summary.projected_amount > 0 %}table-success{% elif summary.projected_amount < 0 %}table-danger{% endif %}">
+        <th colspan="5" class="text-right">
+          Projected
+          {% if summary.projected_amount > 0 %}
+          Surplus
+          {% elif summary.projected_amount < 0 %}
+          Deficit
+          {% endif %}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="text-right text-white {% if summary.projected_amount > 0 %}bg-success{% elif summary.projected_amount < 0 %}bg-danger{% endif %}"
+            title="{% if summary.projected_amount > 0 %}under{% elif summary.projected_amount < 0 %}over{% endif %} budget">
+          {{ summary.projected_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+      </tr>
+    </tbody>
+    {% endif %}
+    <thead>
+      <tr>
+        <th>
+          <a href="{% url 'analysis-home' %}?date={{ dates.prev|date:'Y-m' }}" nb-previous-icon></a>
+          {{ dates.start|date:'Y-m-d' }} - {{ dates.end|date:'Y-m-d' }}
+          <a href="{% url 'analysis-home' %}?date={{ dates.next|date:'Y-m' }}" nb-next-icon></a>
+        </th>
+        <th class="text-right" style="width: 85px"></th>
+        <th class="text-right" style="width: 85px">Budget</th>
+        <th class="text-right" style="width: 85px">Actual</th>
+        <th class="text-right" style="width: 85px">Variance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="text-right text-white {% if summary.variance_amount > 0 %}bg-success{% elif summary.variance_amount < 0 %}bg-danger{% endif %}"
+            title="{% if summary.variance_amount > 0 %}under{% elif summary.variance_amount < 0 %}over{% endif %} budget">
+          {{ summary.variance_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+      </tr>
+    </tbody>
+    {% for category in categories %}
+    <thead>
+      <tr>
+        <th>
+          {{ category.name }}
+        </th>
+        <th class="text-right"></th>
+        <th class="text-right"></th>
+        <th class="text-right"></th>
+        <th class="text-right"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for budget in category.budget_set.all %}
+      <tr>
+        <td class="pl-4">
+          {{ budget.name }}
+        </td>
+        <td class="text-right text-muted small">
+          {{ budget.amount|stringformat:'0.0f' }} x{{ budget.frequency }}
+        </td>
+        <td class="text-right">
+          {{ budget.budget_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+        <td class="text-right">
+          {{ budget.actual_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+        <td class="text-right text-white {% if budget.variance_amount > 0 %}bg-success{% elif budget.variance_amount < 0 %}bg-danger{% endif %}"
+            title="{% if budget.variance_amount > 0 %}under{% elif budget.variance_amount < 0 %}over{% endif %} budget">
+          {{ budget.variance_amount|stringformat:'0.0f'|intcomma }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    {% endfor %}
+  </table>
+</form>
+{% include 'analysis/_analysis.html' %}
+{% endblock content %}

@@ -1,0 +1,30 @@
+{% extends 'nerdbudget/layout.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<form method="POST" class="col-6 mx-auto">
+  {% csrf_token %}
+  <div class="form-group row">
+    <div class="col-4">
+      <input class="form-control" readonly="readonly" value="{{ object.date }}" />
+    </div>
+    <div class="col-4">
+      <input class="form-control" readonly="readonly" value="{{ object.amount }}" />
+    </div>
+    <div class="col-4">
+      <input class="form-control" readonly="readonly" value="{{ object.balance }}" />
+    </div>
+  </div>
+  <div class="form-group">
+    <input class="form-control" readonly="readonly" value="{{ object.description }}" />
+  </div>
+  <div class="form-group text-right">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'budget-list' %}" class="btn btn-outline-secondary">
+      Cancel
+    </a>
+  </div>
+</form>
+
+{% include 'budget/_budget.html' %}
+{% endblock content %}

@@ -1,0 +1,17 @@
+{% extends 'nerdbudget/layout.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<form method="POST" class="col-6 mx-auto">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <div class="form-group text-right">
+    <button type="submit" class="btn btn-warning">Update</button>
+    <a href="{% url 'budget-list' %}" class="btn btn-outline-secondary">
+      Cancel
+    </a>
+  </div>
+</form>
+
+{% include 'budget/_budget.html' %}
+{% endblock content %}

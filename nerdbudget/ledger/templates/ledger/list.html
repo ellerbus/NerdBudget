@@ -1,0 +1,59 @@
+{% extends 'nerdbudget/layout.html' %}
+{% load humanize %}
+{% block content %}
+
+<form method="POST">
+  {% csrf_token %}
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th class="icons"></th>
+        <th>
+          <a href="{% url 'ledger-list' %}?date={{ dates.prev|date:'Y-m' }}" nb-previous-icon></a>
+          {{ dates.start|date:'Y-m-d' }} - {{ dates.end|date:'Y-m-d' }}
+          <a href="{% url 'ledger-list' %}?date={{ dates.next|date:'Y-m' }}" nb-next-icon></a>
+        </th>
+        <th class="icons">Amount</th>
+        <th class="icons"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ledger in ledgers %}
+      <tr>
+        <td>
+          {{ ledger.date|date:'Y-m-d' }}
+        </td>
+        <td>
+          {{ ledger.description }}
+          <br />
+          <small class="text-muted">
+            {{ ledger.pattern }}
+          </small>
+          <br />
+          <small class="text-muted">
+            {{ ledger.budget.category.name }} - {{ ledger.budget.name }}
+          </small>
+        </td>
+        <td class="text-right">
+          {{ ledger.amount|stringformat:'0.00f' }}
+        </td>
+        <td class="icons">
+          <a href="{% url 'ledger-update' ledger.id %}" nb-update-icon></a>
+          <a href="{% url 'ledger-delete' ledger.id %}" nb-delete-icon></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="text-right" colspan="4">
+          <button type="submit" class="btn btn-warning mt-3">
+            Update Sequences
+          </button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</form>
+{% include 'ledger/_ledger.html' %}
+{% endblock content %}

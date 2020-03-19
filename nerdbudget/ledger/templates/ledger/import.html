@@ -1,0 +1,39 @@
+{% extends 'nerdbudget/layout.html' %}
+{% block content %}
+<form method="POST" class="col-6 mx-auto">
+  {% csrf_token %}
+  {% if latest %}
+  <div class="form-group row">
+    <div class="col-4">
+      <input class="form-control" readonly="readonly" value="{{ latest.date|date:'Y-m-d' }}" />
+    </div>
+    <div class="col-4">
+      <input class="form-control" readonly="readonly" value="{{ latest.amount }}" />
+    </div>
+    <div class="col-4">
+      <input class="form-control" readonly="readonly" value="{{ latest.balance }}" />
+    </div>
+  </div>
+  <div class="form-group">
+    <input class="form-control" readonly="readonly" value="{{ latest.description }}" />
+  </div>
+  {% else %}
+  <div class="form-group">
+    <p>
+      No Transactions Available
+    </p>
+  </div>
+  {% endif %}
+  <div class="form-group">
+    <textarea class="form-control" name="transactions" rows="9"></textarea>
+  </div>
+  <div class="form-group text-right">
+    <button type="submit" class="btn btn-warning">Import</button>
+    <a href="{% url 'ledger-list' %}" class="btn btn-outline-secondary">
+      Cancel
+    </a>
+  </div>
+</form>
+
+{% include 'ledger/_ledger.html' %}
+{% endblock content %}
