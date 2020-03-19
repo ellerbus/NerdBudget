@@ -31,6 +31,3 @@ py ./manage.py makemigrations
 py ./manage.py migrate
 
 ```
-
-
-If VS Code needs a nudge `ctrl+shift+P` Python Discover Tests
