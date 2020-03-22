@@ -15,6 +15,9 @@ py -m pip install --upgrade pip
 # install dependencies
 pip install -r requirements.txt
 
+# run the server
+py .\nerdbudget\manage.py runserver
+
 # dev notes - create fixture files
 py .\nerdbudget\manage.py dumpdata --exclude auth > data.json
 py .\nerdbudget\manage.py loaddata data.json
